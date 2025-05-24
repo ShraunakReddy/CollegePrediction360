@@ -517,6 +517,9 @@ import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+
 
 interface College {
   college: string;
@@ -537,6 +540,7 @@ interface FormData {
   email: string;
 }
 
+
 const PredictionResults: React.FC = () => {
   const [formData, setFormData] = useState<FormData | null>(null);
   const [colleges, setColleges] = useState<College[]>([]);
@@ -549,6 +553,35 @@ const PredictionResults: React.FC = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
+
+  const generatePDF = () => {
+  if (filteredColleges.length === 0) {
+    showToast("No data available to export", "warning");
+    return;
+  }
+
+  const doc = new jsPDF();
+  doc.setFontSize(14);
+  doc.text('College Prediction Report', 14, 20);
+  doc.setFontSize(10);
+
+  const tableData = displayedColleges.map((college) => [
+    college.college,
+    college.branch,
+    college.branchCode,
+    college.closingRank.toString()
+  ]);
+
+  autoTable(doc, {
+    startY: 30,
+    head: [['College Name', 'Branch', 'Branch Code', 'Closing Rank']],
+    body: tableData,
+    styles: { fontSize: 9 },
+    headStyles: { fillColor: [100, 149, 237] },
+  });
+
+  doc.save(`${reportName}.pdf`);
+  };
 
   useEffect(() => {
     document.title = 'College Predictions - CollegePredict360';
@@ -617,13 +650,22 @@ const PredictionResults: React.FC = () => {
             )}
           </div>
           <div className="mt-4 md:mt-0">
-            <Button
+            {/* <Button
               onClick={() => setIsPDFModalOpen(true)}
               variant="primary"
               className="flex items-center"
             >
               <FileDown size={18} className="mr-2" />
               Download PDF Report
+            </Button> */}
+
+            <Button
+            onClick={generatePDF}
+            variant="primary"
+            className="flex items-center"
+            >
+            <FileDown size={18} className="mr-2" />
+                Download PDF Report
             </Button>
           </div>
         </Card>

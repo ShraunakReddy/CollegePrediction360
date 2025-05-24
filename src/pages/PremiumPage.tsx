@@ -61,6 +61,29 @@ const planFeatures: PlanFeature[] = [
   }
 ];
 
+// const plans = [
+//   {
+//     id: 'basic',
+//     name: 'Basic',
+//     price: '₹49',
+//     description: 'Perfect for one-time use',
+//     features: ['1 PDF Report', '60 College Matches', 'Risk Level Analysis', 'One-time Payment'],
+//     cta: 'Choose Basic',
+//     popular: false,
+//     reports: 1
+//   },
+//   {
+//     id: 'pro',
+//     name: 'Pro',
+//     price: '₹99',
+//     description: 'Best for college seekers',
+//     features: ['Unlimited PDF Reports', '60 College Matches', 'Risk Level Analysis', 'Advanced Filtering', 'Unlimited Predictions'],
+//     cta: 'Choose Pro',
+//     popular: true,
+//     reports: 'unlimited'
+//   }
+// ];
+
 const plans = [
   {
     id: 'basic',
@@ -75,14 +98,21 @@ const plans = [
   {
     id: 'pro',
     name: 'Pro',
-    price: '₹99',
+    price: '₹69', // updated from ₹99
     description: 'Best for college seekers',
-    features: ['Unlimited PDF Reports', '60 College Matches', 'Risk Level Analysis', 'Advanced Filtering', 'Unlimited Predictions'],
+    features: [
+      '3 PDF Reports', // updated from Unlimited
+      '60 College Matches',
+      'Risk Level Analysis',
+      'Advanced Filtering',
+      'Unlimited Predictions'
+    ],
     cta: 'Choose Pro',
     popular: true,
-    reports: 'unlimited'
+    reports: 3 // updated from 'unlimited'
   }
 ];
+
 
 const PremiumPage: React.FC = () => {
   const [selectedPlan, setSelectedPlan] = useState<string>('pro');
@@ -97,17 +127,84 @@ const PremiumPage: React.FC = () => {
     document.title = 'Premium Plans - CollegePredict360';
   }, []);
   
-  const handleUpgrade = () => {
-    setIsProcessing(true);
+  // const handleUpgrade = () => {
+  //   setIsProcessing(true);
     
-    // Simulate payment processing
-    setTimeout(() => {
-      upgradeAccount();
-      showToast('Congratulations! You are now a premium member.', 'success');
-      setIsProcessing(false);
-      navigate('/dashboard');
-    }, 2000);
-  };
+  //   // Simulate payment processing
+  //   setTimeout(() => {
+  //     upgradeAccount();
+  //     showToast('Congratulations! You are now a premium member.', 'success');
+  //     setIsProcessing(false);
+  //     navigate('/dashboard');
+  //   }, 2000);
+  // };
+
+  const handleUpgrade = async () => {
+  setIsProcessing(true);
+//const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/payment/create-order`, {
+  try {
+    const res = await fetch(`http://localhost:4000/api/payment/create-order`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ amount: selectedPlan === 'basic' ? 49 : 69 })
+    });
+
+    const order = await res.json();
+      //key: import.meta.env.VITE_RAZORPAY_KEY_ID, //*************************************************** */
+    const options = {
+      key: 'rzp_test_Xq2DEua96W6DvU',
+      amount: order.amount,
+      currency: order.currency,
+      name: 'CollegePredict360',
+      description: `${selectedPlan} Plan Purchase`,
+      order_id: order.id,
+      handler: async function (response: any) {
+        try {
+          const verifyRes = await fetch(`http://localhost:4000/api/payment/verify`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              razorpay_order_id: order.id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            }),
+          });
+
+          const verifyData = await verifyRes.json();
+
+          if (verifyRes.ok) {
+            upgradeAccount();
+            showToast('Payment verified successfully! You are now a premium member.', 'success');
+            navigate('/dashboard');
+          } else {
+            showToast(`Verification failed: ${verifyData.error}`, 'error');
+          }
+        } catch (error) {
+          showToast('Something went wrong during verification. Please try again.', 'error');
+        }
+      },
+      prefill: {
+        name: user?.name || '',
+        email: user?.email || ''
+      },
+      theme: {
+        color: '#6366f1'
+      }
+    };
+
+    const rzp = new (window as any).Razorpay(options);
+        rzp.open();
+      } catch (err) {
+        showToast('Payment failed. Please try again.', 'error');
+      } finally {
+        setIsProcessing(false);
+      }
+    };
+
   
   // Feature check/cross icon component
   const FeatureIcon: React.FC<{ included: boolean }> = ({ included }) => {
@@ -122,7 +219,7 @@ const PremiumPage: React.FC = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      <div className="flex-grow py-16 bg-gray-50">
+      <div className="pt-32 flex-grow py-16 bg-gray-50">
         <div className="container-custom">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
@@ -240,7 +337,7 @@ const PremiumPage: React.FC = () => {
                       Payment Details
                     </h3>
                     <p className="text-gray-600 text-sm">
-                      You'll be charged a one-time payment of {selectedPlan === 'basic' ? '₹49' : '₹99'} for the {selectedPlan === 'basic' ? 'Basic' : 'Pro'} plan.
+                      You'll be charged a one-time payment of {selectedPlan === 'basic' ? '₹49' : '₹69'} for the {selectedPlan === 'basic' ? 'Basic' : 'Pro'} plan.
                     </p>
                   </div>
                   
@@ -261,7 +358,7 @@ const PremiumPage: React.FC = () => {
                     </div>
                   </div>
                   
-                  <div className="mb-8 bg-gray-50 p-4 rounded-lg">
+                  {/* <div className="mb-8 bg-gray-50 p-4 rounded-lg">
                     <div className="flex justify-between mb-3">
                       <span className="text-gray-600">Plan</span>
                       <span className="font-medium">{selectedPlan === 'basic' ? 'Basic' : 'Pro'}</span>
@@ -273,6 +370,21 @@ const PremiumPage: React.FC = () => {
                     <div className="flex justify-between pt-3 border-t border-gray-200">
                       <span className="font-medium">Total (One-time)</span>
                       <span className="font-bold text-lg">{selectedPlan === 'basic' ? '₹49' : '₹99'}</span>
+                    </div>
+                  </div> */}
+
+                  <div className="mb-8 bg-gray-50 p-4 rounded-lg">
+                    <div className="flex justify-between mb-3">
+                      <span className="text-gray-600">Plan</span>
+                      <span className="font-medium">{selectedPlan === 'basic' ? 'Basic' : 'Pro'}</span>
+                    </div>
+                    <div className="flex justify-between mb-3">
+                      <span className="text-gray-600">Reports</span>
+                      <span className="font-medium">{selectedPlan === 'basic' ? '1 report' : '3 reports'}</span>
+                    </div>
+                    <div className="flex justify-between pt-3 border-t border-gray-200">
+                      <span className="font-medium">Total (One-time)</span>
+                      <span className="font-bold text-lg">{selectedPlan === 'basic' ? '₹49' : '₹69'}</span>
                     </div>
                   </div>
                   

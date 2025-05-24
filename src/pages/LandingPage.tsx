@@ -41,9 +41,21 @@ const testimonials = [
   }
 ];
 
+const referralColleges = [
+  "IIT Bombay",
+  "IIT Delhi",
+  "NIT Trichy",
+  "BITS Pilani",
+  "IIIT Hyderabad",
+  "JNTU Hyderabad",
+  "Other"
+];
+
+
 const LandingPage: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
+
 
   // Set page title
   useEffect(() => {
@@ -64,7 +76,7 @@ const LandingPage: React.FC = () => {
       <Navbar />
       
       {/* Hero Section */}
-      <section id="home" className="pt-24 pb-16 md:pt-32 md:pb-24 gradient-bg">
+      <section id="home" className="pt-24 pb-40 md:pt-32 md:pb-52 gradient-bg relative z-10">
         <div className="container-custom">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div className="text-white animate-fade-in">
@@ -75,6 +87,37 @@ const LandingPage: React.FC = () => {
                 Enter your rank and get a personalized list of top 60 colleges based on real data.
                 No more guesswork, just data-driven college predictions.
               </p>
+
+              {/* referal collages */}
+              {/* Referral colleges dropdown */}
+              <div className="mb-6">
+                <label htmlFor="referralCollege" className="block text-sm font-medium text-white mb-2">
+                  How did you hear about us?
+                </label>
+                <select
+                  id="referralCollege"
+                  className="w-full sm:w-80 px-4 py-3 rounded-lg bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 appearance-none pr-10"
+                  style={{
+                    backgroundImage:
+                      "url(\"data:image/svg+xml,%3Csvg fill='%239C27B0' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E\")",
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'right 0.75rem center',
+                    backgroundSize: '1.5rem',
+                  }}
+                  defaultValue=""
+                >
+                  <option value="" disabled>
+                    Select an option
+                  </option>
+                  {referralColleges.map((college, index) => (
+                    <option key={index} value={college}>
+                      {college}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                 <Link to={isAuthenticated ? "/predictor" : "/signup"}>
                   <Button size="lg" variant="primary" className="w-full sm:w-auto">
@@ -92,14 +135,13 @@ const LandingPage: React.FC = () => {
               <img 
                 src="https://images.pexels.com/photos/3769138/pexels-photo-3769138.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" 
                 alt="Students celebrating college admission" 
-                className="rounded-lg shadow-xl transform -rotate-2 animate-fade-in"
+                className="rounded-lg shadow-xl transform -rotate-2 animate-fade-in -mb-14"
               />
             </div>
           </div>
         </div>
-        
         {/* Wave Separator */}
-        <div className="absolute bottom-0 left-0 right-0">
+        <div className="absolute bottom-0 left-0 right-0 pointer-events-none">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
             <path fill="#f9fafb" fillOpacity="1" d="M0,96L80,106.7C160,117,320,139,480,138.7C640,139,800,117,960,117.3C1120,117,1280,139,1360,149.3L1440,160L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"></path>
           </svg>
@@ -107,7 +149,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-16 bg-gray-50" id="how-it-works">
+      <section className="pt-32 py-16 bg-gray-50" id="how-it-works">
         <div className="container-custom">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
