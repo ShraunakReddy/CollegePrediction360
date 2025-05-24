@@ -319,9 +319,15 @@ const LandingPage: React.FC = () => {
             Join thousands of students who've used CollegePredict360 to find their ideal college match.
           </p>
           <Link to={isAuthenticated ? "/predictor" : "/signup"}>
-            <Button 
+            {/* <Button 
               size="lg" 
               className="bg-white text-primary-600 hover:bg-gray-100 focus:ring-white"
+            >
+              Get Started Now <ChevronRight size={20} className="ml-2" />
+            </Button> */}
+            <Button 
+              size="lg" 
+              className="bg-primary-600 text-white hover:bg-white hover:text-primary-600 border border-primary-600 transition-colors duration-200 shadow-md hover:shadow-lg focus:ring-4 focus:ring-primary-300"
             >
               Get Started Now <ChevronRight size={20} className="ml-2" />
             </Button>

@@ -85,16 +85,16 @@ const planFeatures: PlanFeature[] = [
 // ];
 
 const plans = [
-  {
-    id: 'basic',
-    name: 'Basic',
-    price: '₹49',
-    description: 'Perfect for one-time use',
-    features: ['1 PDF Report', '60 College Matches', 'Risk Level Analysis', 'One-time Payment'],
-    cta: 'Choose Basic',
-    popular: false,
-    reports: 1
-  },
+  // {
+  //   id: 'basic',
+  //   name: 'Basic',
+  //   price: '₹49',
+  //   description: 'Perfect for one-time use',
+  //   features: ['1 PDF Report', '60 College Matches', 'Risk Level Analysis', 'One-time Payment'],
+  //   cta: 'Choose Basic',
+  //   popular: false,
+  //   reports: 1
+  // },
   {
     id: 'pro',
     name: 'Pro',
@@ -148,7 +148,7 @@ const PremiumPage: React.FC = () => {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ amount: selectedPlan === 'basic' ? 49 : 69 })
+      body: JSON.stringify({ amount: 69 })
     });
 
     const order = await res.json();
@@ -280,12 +280,13 @@ const PremiumPage: React.FC = () => {
               </div>
               
               {/* Pricing cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto"> */}
+              <div className="flex justify-center mx-auto px-4">
                 {plans.map((plan) => (
                   <div 
                     key={plan.id}
                     className={`
-                      relative rounded-2xl overflow-hidden transition-all duration-300
+                      relative rounded-2xl overflow-hidden transition-all duration-300 w-full max-w-sm
                       ${selectedPlan === plan.id ? 'ring-2 ring-primary-500 transform scale-[1.02]' : 'ring-1 ring-gray-200'}
                       ${plan.popular ? 'transform md:scale-[1.03] z-10' : ''}
                     `}
@@ -337,7 +338,7 @@ const PremiumPage: React.FC = () => {
                       Payment Details
                     </h3>
                     <p className="text-gray-600 text-sm">
-                      You'll be charged a one-time payment of {selectedPlan === 'basic' ? '₹49' : '₹69'} for the {selectedPlan === 'basic' ? 'Basic' : 'Pro'} plan.
+                      You'll be charged a one-time payment of ₹69 for the Pro plan.
                     </p>
                   </div>
                   
@@ -376,15 +377,15 @@ const PremiumPage: React.FC = () => {
                   <div className="mb-8 bg-gray-50 p-4 rounded-lg">
                     <div className="flex justify-between mb-3">
                       <span className="text-gray-600">Plan</span>
-                      <span className="font-medium">{selectedPlan === 'basic' ? 'Basic' : 'Pro'}</span>
+                      <span className="font-medium">'Pro'</span>
                     </div>
                     <div className="flex justify-between mb-3">
                       <span className="text-gray-600">Reports</span>
-                      <span className="font-medium">{selectedPlan === 'basic' ? '1 report' : '3 reports'}</span>
+                      <span className="font-medium">3 reports</span>
                     </div>
                     <div className="flex justify-between pt-3 border-t border-gray-200">
                       <span className="font-medium">Total (One-time)</span>
-                      <span className="font-bold text-lg">{selectedPlan === 'basic' ? '₹49' : '₹69'}</span>
+                      <span className="font-bold text-lg">₹69</span>
                     </div>
                   </div>
                   
